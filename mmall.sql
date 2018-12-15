@@ -24,6 +24,25 @@ INSERT INTO `mmall_product` VALUES ('1', 'Hair Cut', '45 minutes $55.00', '55.00
 COMMIT;
 
 -- ----------------------------
+--  Table structure for `mmall_dapper`
+-- ----------------------------
+DROP TABLE IF EXISTS `mmall_dapper`;
+CREATE TABLE `mmall_dapper` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'dapper id',
+  `name` varchar(100) NOT NULL COMMENT 'dapper name',
+  `create_time` datetime DEFAULT NULL COMMENT 'Create time',
+  `update_time` datetime DEFAULT NULL COMMENT 'Update time',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+--  Records of `mmall_dapper`
+-- ----------------------------
+BEGIN;
+INSERT INTO `mmall_dapper` VALUES ('1', 'Wayne', '2017-04-09 23:50:14', '2017-04-09 23:50:14'), ('2', 'My-Hanh', '2017-04-09 23:50:14', '2017-04-09 23:50:14');
+COMMIT;
+
+-- ----------------------------
 --  Table structure for `mmall_order`
 -- ----------------------------
 DROP TABLE IF EXISTS `mmall_order`;
@@ -35,6 +54,7 @@ CREATE TABLE `mmall_order` (
   `payment` decimal(20,2) DEFAULT NULL COMMENT 'Actual amount paid, dollar, round to two decimals',
   `status` int(10) DEFAULT NULL COMMENT 'status:0-cancelled, 10-unpaid, 20-paid, 40-shipped, 50-success, 60-close',
   `payment_time` datetime DEFAULT NULL COMMENT 'payment time',
+  `dapper_id` int(11) DEFAULT NULL,
   `send_time` datetime DEFAULT NULL COMMENT 'send-time',
   `end_time` datetime DEFAULT NULL COMMENT 'end-time',
   `close_time` datetime DEFAULT NULL COMMENT 'close-time',
@@ -48,7 +68,7 @@ CREATE TABLE `mmall_order` (
 --  Records of `mmall_order`
 -- ----------------------------
 BEGIN;
-INSERT INTO `mmall_order` VALUES ('103', '1491753014256', '1', '25', '13998.00', '10', null, null, null, null, '2017-04-09 23:50:14', '2017-04-09 23:50:14');
+INSERT INTO `mmall_order` VALUES ('103', '1491753014256', '1', '25', '13998.00', '10', null, 1, null, null, null, '2017-04-09 23:50:14', '2017-04-09 23:50:14');
 COMMIT;
 
 -- ----------------------------

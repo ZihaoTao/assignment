@@ -18,6 +18,8 @@ public class Order {
 
     private Date paymentTime;
 
+    private Integer dapperId;
+
     private Date startTime;
 
     private Date endTime;
@@ -28,7 +30,7 @@ public class Order {
 
     private Date updateTime;
 
-    public Order(Integer id, Long orderNo, Integer userId, Integer shippingId, BigDecimal payment, Integer status, Date paymentTime, Date startTime, Date endTime, Date closeTime, Date createTime, Date updateTime) {
+    public Order(Integer id, Long orderNo, Integer userId, Integer shippingId, BigDecimal payment, Integer status, Date paymentTime, Integer dapperId, Date startTime, Date endTime, Date closeTime, Date createTime, Date updateTime) {
         this.id = id;
         this.orderNo = orderNo;
         this.userId = userId;
@@ -36,12 +38,22 @@ public class Order {
         this.payment = payment;
         this.status = status;
         this.paymentTime = paymentTime;
+        this.dapperId = dapperId;
         this.startTime = startTime;
         this.endTime = endTime;
         this.closeTime = closeTime;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }
+
+    public Integer getDapperId() {
+        return dapperId;
+    }
+
+    public void setDapperId(Integer dapperId) {
+        this.dapperId = dapperId;
+    }
+
     public Order() {
         super();
     }

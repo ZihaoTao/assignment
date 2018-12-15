@@ -37,7 +37,7 @@ public class OrderController {
 
     @RequestMapping("create.do")
     @ResponseBody
-    public ServerResponse create(HttpSession session, Integer shippingId, Integer productId) {
+    public ServerResponse create(HttpSession session, Integer shippingId, Integer productId, Integer dapperId) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if(user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
@@ -45,7 +45,7 @@ public class OrderController {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String now = sdf.format(cal.getTime());
-        return iOrderService.createOrder(user.getId(), shippingId, productId, now);
+        return iOrderService.createOrder(user.getId(), shippingId, productId, dapperId, now);
     }
 
     @RequestMapping("cancel.do")

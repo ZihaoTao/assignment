@@ -45,12 +45,12 @@ public class ShippingVo {
         this.receiverMobile = receiverMobile;
     }
 
-    public String getReceiverProvince() {
+    public String getReceiverState() {
         return receiverState;
     }
 
-    public void setReceiverProvince(String receiverProvince) {
-        this.receiverState = receiverProvince;
+    public void setReceiverState(String receiverState) {
+        this.receiverState = receiverState;
     }
 
     public String getReceiverCity() {

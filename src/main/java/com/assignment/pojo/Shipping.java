@@ -86,12 +86,12 @@ public class Shipping {
         this.receiverMobile = receiverMobile == null ? null : receiverMobile.trim();
     }
 
-    public String getReceiverProvince() {
+    public String getReceiverState() {
         return receiverState;
     }
 
-    public void setReceiverProvince(String receiverProvince) {
-        this.receiverState = receiverProvince == null ? null : receiverProvince.trim();
+    public void setReceiverState(String receiverState) {
+        this.receiverState = receiverState;
     }
 
     public String getReceiverCity() {

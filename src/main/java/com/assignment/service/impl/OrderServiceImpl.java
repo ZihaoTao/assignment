@@ -46,9 +46,10 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     private ProductMapper productMapper;
 
+
     private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
-    public ServerResponse createOrder(Integer userId, Integer shippingId, Integer ProductId, String start) {
+    public ServerResponse createOrder(Integer userId, Integer shippingId, Integer ProductId, Integer dapperId, String start) {
         Date startTime = DateTimeUtil.strToDate(start);
         Date endTime;
         Calendar rightNow = Calendar.getInstance();
@@ -64,11 +65,8 @@ public class OrderServiceImpl implements IOrderService {
             endTime = rightNow.getTime();
         }
 
-        // get cart data from cartMapper
-        // calculate total price of the cart
-
-        if(orderMapper.checkTime(startTime, endTime) != 0) {
-            return ServerResponse.createByErrorMessage("This time period has been scheduled, please choose another time.");
+        if(orderMapper.checkTime(startTime, endTime, dapperId) != 0) {
+            return ServerResponse.createByErrorMessage("The dapper you choose has been assigned at this period of time. Choose another time or another dapper.");
         }
 
         ServerResponse serverResponse = this.getCartOrderItem(userId, ProductId);
@@ -79,12 +77,12 @@ public class OrderServiceImpl implements IOrderService {
         List<OrderItem> orderItemList = (List<OrderItem>) serverResponse.getData();
         BigDecimal payment = this.getOrderTotalPrice(orderItemList);
 
-        Order order = this.assembleOrder(userId, shippingId, payment, startTime, endTime);
+        Order order = this.assembleOrder(userId, shippingId, payment, dapperId, startTime, endTime);
         if(order == null) {
             return ServerResponse.createByErrorMessage("Cannot create order");
         }
         if(CollectionUtils.isEmpty(orderItemList)) {
-            return ServerResponse.createByErrorMessage("Cart is empty");
+            return ServerResponse.createByErrorMessage("No product chosen");
         }
         for(OrderItem orderItem : orderItemList) {
             orderItem.setOrderNo(order.getOrderNo());
@@ -120,6 +118,7 @@ public class OrderServiceImpl implements IOrderService {
         orderVo.setStatus(order.getStatus());
         orderVo.setStatusDesc(Const.OrderStatusEnum.codeOf(order.getStatus()).getValue());
         orderVo.setShippingId(order.getShippingId());
+        orderVo.setDapperId(order.getDapperId());
         Shipping shipping = shippingMapper.selectByPrimaryKey(order.getShippingId());
         if(shipping != null) {
             orderVo.setReceiverName(shipping.getReceiverName());
@@ -144,8 +143,6 @@ public class OrderServiceImpl implements IOrderService {
         orderItemVo.setOrderNo(orderItem.getOrderNo());
         orderItemVo.setProductId(orderItem.getProductId());
         orderItemVo.setProductName(orderItem.getProductName());
-        orderItemVo.setCurrentUnitPrice(orderItem.getCurrentUnitPrice());
-        orderItemVo.setQuantity(orderItem.getQuantity());
         orderItemVo.setTotalPrice(orderItem.getTotalPrice());
         orderItemVo.setCreateTime(DateTimeUtil.dateToStr(orderItem.getCreateTime()));
         return orderItemVo;
@@ -155,7 +152,7 @@ public class OrderServiceImpl implements IOrderService {
         ShippingVo shippingVo = new ShippingVo();
         shippingVo.setReceiverName(shipping.getReceiverName());
         shippingVo.setReceiverAddress(shipping.getReceiverAddress());
-        shippingVo.setReceiverProvince(shipping.getReceiverProvince());
+        shippingVo.setReceiverState(shipping.getReceiverState());
         shippingVo.setReceiverCity(shipping.getReceiverCity());
         shippingVo.setReceiverDistrict(shipping.getReceiverDistrict());
         shippingVo.setReceiverMobile(shipping.getReceiverMobile());
@@ -165,7 +162,7 @@ public class OrderServiceImpl implements IOrderService {
     }
 
 
-    private Order assembleOrder(Integer userId, Integer shippingId, BigDecimal payment, Date startTime, Date endTime) {
+    private Order assembleOrder(Integer userId, Integer shippingId, BigDecimal payment,Integer dapperId, Date startTime, Date endTime) {
         long orderNo = this.generateOrderNo();
         Order order = new Order();
         order.setUserId(userId);
@@ -175,6 +172,7 @@ public class OrderServiceImpl implements IOrderService {
         order.setStatus(Const.OrderStatusEnum.NO_PAY.getCode());
         order.setStartTime(startTime);
         order.setEndTime(endTime);
+        order.setDapperId(dapperId);
         // shipping out time, ect. Will be modified when is shipped out
         int rowCount = orderMapper.insert(order);
         if(rowCount > 0) {
@@ -250,6 +248,52 @@ public class OrderServiceImpl implements IOrderService {
             orderVoList.add(orderVo);
         }
         return orderVoList;
+    }
+
+    // backend
+
+    public ServerResponse<PageInfo> manageList(int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Order> orderList = orderMapper.selectAllOrder();
+        // admin does not need userId
+        List<OrderVo> orderVoList = this.assembleOrderVoList(orderList, null);
+        PageInfo resultPage = new PageInfo(orderList);
+        resultPage.setList(orderVoList);
+        return ServerResponse.createBySuccess(resultPage);
+    }
+
+    public ServerResponse<OrderVo> manageDetail(Long orderNo) {
+        Order order = orderMapper.selectByOrderNo(orderNo);
+        if(order != null) {
+            List<OrderItem> orderItemList = orderItemMapper.getByOrderNo(orderNo);
+            OrderVo orderVo = this.assembleOrderVo(order, orderItemList);
+            return ServerResponse.createBySuccess(orderVo);
+        }
+        return ServerResponse.createByErrorMessage("Order does not exist");
+    }
+
+    public ServerResponse<PageInfo> manageSearch(Long orderNo, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        Order order = orderMapper.selectByOrderNo(orderNo);
+        if(order != null) {
+            List<OrderItem> orderItemList = orderItemMapper.getByOrderNo(orderNo);
+            OrderVo orderVo = this.assembleOrderVo(order, orderItemList);
+
+            PageInfo resultPage = new PageInfo(Lists.newArrayList(order));
+            resultPage.setList(Lists.newArrayList(orderVo));
+            return ServerResponse.createBySuccess(resultPage);
+        }
+        return ServerResponse.createByErrorMessage("Order does not exist");
+    }
+
+    public ServerResponse<String> manageSendGoods(Long orderNo) {
+        Order order = orderMapper.selectByOrderNo(orderNo);
+        if(order != null) {
+            order.setStatus(Const.OrderStatusEnum.ORDER_SUCCESS.getCode());
+            orderMapper.updateByPrimaryKeySelective(order);
+            return ServerResponse.createBySuccess("Complete successfully");
+        }
+        return ServerResponse.createByErrorMessage("Order does not exist");
     }
 
 }

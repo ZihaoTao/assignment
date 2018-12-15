@@ -84,6 +84,36 @@ public class Const {
         }
     }
 
+    public enum DapperStatusEnum{
+        AVAILABLE(1,"AVAILABLE"),
+        UNAVAILABLE(2,"UNAVAILABLE");
+
+
+        DapperStatusEnum(int code,String value){
+            this.code = code;
+            this.value = value;
+        }
+        private String value;
+        private int code;
+
+        public String getValue() {
+            return value;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public static DapperStatusEnum codeOf(int code){
+            for(DapperStatusEnum dapperStatusEnum : values()){
+                if(dapperStatusEnum.getCode() == code){
+                    return dapperStatusEnum;
+                }
+            }
+            throw new RuntimeException("Cannot find enum object");
+        }
+    }
+
     public interface  AlipayCallback{
         String TRADE_STATUS_WAIT_BUYER_PAY = "WAIT_BUYER_PAY";
         String TRADE_STATUS_TRADE_SUCCESS = "TRADE_SUCCESS";

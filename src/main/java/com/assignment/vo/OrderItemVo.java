@@ -13,11 +13,6 @@ public class OrderItemVo {
 
     private String productName;
 
-
-    private BigDecimal currentUnitPrice;
-
-    private Integer quantity;
-
     private BigDecimal totalPrice;
 
     private String createTime;
@@ -44,22 +39,6 @@ public class OrderItemVo {
 
     public void setProductName(String productName) {
         this.productName = productName;
-    }
-
-    public BigDecimal getCurrentUnitPrice() {
-        return currentUnitPrice;
-    }
-
-    public void setCurrentUnitPrice(BigDecimal currentUnitPrice) {
-        this.currentUnitPrice = currentUnitPrice;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
     }
 
     public BigDecimal getTotalPrice() {

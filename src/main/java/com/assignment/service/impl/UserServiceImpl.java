@@ -186,6 +186,13 @@ public class UserServiceImpl implements IUserService {
         }
         user.setPassword(org.apache.commons.lang3.StringUtils.EMPTY);
         return ServerResponse.createBySuccess(user);
+    }
 
+    @Override
+    public ServerResponse checkAdminRole(User user){
+        if(user != null && user.getRole().intValue() == Const.Role.ROLE_ADMIN){
+            return ServerResponse.createBySuccess();
+        }
+        return ServerResponse.createByError();
     }
 }

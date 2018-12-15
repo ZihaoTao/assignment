@@ -18,6 +18,8 @@ public class OrderVo {
 
     private String paymentTime;
 
+    private Integer dapperId;
+
     private String startTime;
 
     private String endTime;
@@ -35,6 +37,14 @@ public class OrderVo {
     private String receiverName;
 
     private ShippingVo shippingVo;
+
+    public Integer getDapperId() {
+        return dapperId;
+    }
+
+    public void setDapperId(Integer dapperId) {
+        this.dapperId = dapperId;
+    }
 
     public long getOrderNo() {
         return orderNo;

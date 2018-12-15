@@ -29,5 +29,5 @@ public interface OrderMapper {
 
     int checkOrderNumber();
 
-    int checkTime(@Param("startTime") Date startTime, @Param("endTime") Date endTime);
+    int checkTime(@Param("startTime") Date startTime, @Param("endTime") Date endTime, @Param("dapperId") Integer dapperId);
 }

@@ -10,6 +10,7 @@
       <arg column="payment" jdbcType="DECIMAL" javaType="java.math.BigDecimal" />
       <arg column="status" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="payment_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+      <arg column="dapper_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="send_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
       <arg column="end_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
       <arg column="close_time" jdbcType="TIMESTAMP" javaType="java.util.Date" />
@@ -18,7 +19,7 @@
     </constructor>
   </resultMap>
   <sql id="Base_Column_List" >
-    id, order_no, user_id, shipping_id, payment, status, payment_time,
+    id, order_no, user_id, shipping_id, dapper_id, payment, status, payment_time,
     send_time, end_time, close_time, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -33,11 +34,12 @@
   </delete>
   <insert id="insert" parameterType="com.assignment.pojo.Order" >
     insert into mmall_order (id, order_no, user_id,
-      shipping_id, payment, status, payment_time,
+      shipping_id, payment, status, payment_time,dapper_id,
       send_time, end_time, close_time,
       create_time, update_time)
     values (#{id,jdbcType=INTEGER}, #{orderNo,jdbcType=BIGINT}, #{userId,jdbcType=INTEGER},
       #{shippingId,jdbcType=INTEGER}, #{payment,jdbcType=DECIMAL},#{status,jdbcType=INTEGER}, #{paymentTime,jdbcType=TIMESTAMP},
+      #{dapperId,jdbcType=INTEGER},
       #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{closeTime,jdbcType=TIMESTAMP},
       now(), now())
   </insert>
@@ -58,6 +60,9 @@
       </if>
       <if test="payment != null" >
         payment,
+      </if>
+      <if test="dapperId != null" >
+        dapper_id,
       </if>
       <if test="status != null" >
         status,
@@ -96,6 +101,9 @@
       </if>
       <if test="payment != null" >
         #{payment,jdbcType=DECIMAL},
+      </if>
+      <if test="dapperId != null" >
+        #{dapperId,jdbcType=INTEGER},
       </if>
       <if test="status != null" >
         #{status,jdbcType=INTEGER},
@@ -141,6 +149,9 @@
       <if test="paymentTime != null" >
         payment_time = #{paymentTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="dapperId != null" >
+        dapper_id = #{dapperId,jdbcType=INTEGER},
+      </if>
       <if test="startTime != null" >
         send_time = #{startTime,jdbcType=TIMESTAMP},
       </if>
@@ -167,6 +178,7 @@
       payment = #{payment,jdbcType=DECIMAL},
       status = #{status,jdbcType=INTEGER},
       payment_time = #{paymentTime,jdbcType=TIMESTAMP},
+      dapper_id = #{dapperId,jdbcType=INTEGER},
       send_time = #{startTime,jdbcType=TIMESTAMP},
       end_time = #{endTime,jdbcType=TIMESTAMP},
       close_time = #{closeTime,jdbcType=TIMESTAMP},
@@ -174,7 +186,6 @@
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
-
 
   <select id="selectByUserIdAndOrderNo" resultMap="BaseResultMap" parameterType="map">
     SELECT
@@ -218,7 +229,9 @@
   </select>
 
   <select id="checkTime" resultType="int" parameterType="map">
-    SELECT  count(1) from mmall_order where (status = 10 OR status = 20 OR status = 40)
+    SELECT  count(1) from mmall_order
+    where (status = 10 OR status = 20 OR status = 40)
+    AND dapper_id = #{dapperId}
     AND (send_time &lt;= #{startTime} and end_time &gt;= #{startTime})
     OR (send_time &lt;= #{endTime} and end_time &gt;= #{endTime})
     OR (send_time &gt;= #{startTime} and end_time &lt;= #{endTime})
