@@ -20,15 +20,20 @@ And status of response:
 ```
 For this assignment, I build three modules: user, shipping, order.
 
-To avoid time conflicts, everytime consumer makes an appointment, he needs to choose cutting type (Hair cut 45min $55 / Shave 30min $30 / Complete Grooming 1hour $70),  start time, shipping id.
+To avoid time conflicts, everytime consumer makes an appointment, he needs to choose cutting type 
+(Hair cut 45min $55 / Shave 30min $30 / Complete Grooming 1hour $70),  start time, shipping id.
 
 For the cutting type, it is a product id and we can use this id to get product data from mmall_product database.
 
-For the start time, for test purpose, I set the time when the order is created as start time. Of course you can modify the code to input any time you want.
+For the start time, for test purpose, I set the time when the order is created as start time. 
+Of course you can modify the code to input any time you want.
 
 For the shipping id, we can use this id to get address info from mmall_shipping database.
 
-Once get all the params, first, it will calculate the end time based on product id. For example, if you choose hair cut, the end time will be start time add 45 min. Second, start time and end time will be put into mmall_order databse.
+Once get all the params, 
+first, it will calculate the end time based on product id. 
+For example, if you choose hair cut, the end time will be start time add 45 min. 
+Second, start time and end time will be put into mmall_order databse.
 
 IMPORTANT:
 How can we easily find out which time block is free or taken?
@@ -41,13 +46,20 @@ How can we easily find out which time block is free or taken?
     OR (send_time &gt;= #{startTime} and end_time &lt;= #{endTime})
   </select>
 
-Everytime a new costumer makes an appointment, his input time will be checked. There are two conditions that are illegal:
+Everytime a new costumer makes an appointment, his input time will be checked. 
+There are two conditions that are illegal:
 
-1. you can find an order, whose status is not (50,"ORDER SUCCESS"), (60,"ORDER CLOSE") or (0,"CANCELED"), and the new custumer's start time or end time is between this order's start time and end time.
+1. you can find an order, whose status is not (50,"ORDER SUCCESS"), (60,"ORDER CLOSE") or (0,"CANCELED"), 
+and the new custumer's start time or end time is between this order's start time and end time.
 
-2. you can find an order, whose status is not (50,"ORDER SUCCESS"), (60,"ORDER CLOSE") or (0,"CANCELED"), and the new custumer's start time is before this order's start time and end time is after this order's end time.
+2. you can find an order, whose status is not (50,"ORDER SUCCESS"), (60,"ORDER CLOSE") or (0,"CANCELED"), 
+and the new custumer's start time is before this order's start time and end time is after this order's end time.
 
-Small problem: I assume there is only one barber... To solve this problem, I need to build another module to record the status of our barbers, but I do not want to make it too complex. So one simple solution is: once an order is canceled or finished, the number of available barbers recovers. if barber number is zero, do the check above; else just minus 1 and add the appointment into the database;
+Small problem: I assume there is only one barber... 
+To solve this problem, I need to build another module to record the status of our barbers, 
+but I do not want to make it too complex. 
+So one simple solution is: once an order is canceled or finished, the number of available barbers recovers. 
+If barber number is zero, do the check above; else just minus 1 and add the appointment into the database;
 
 
 
